@@ -115,8 +115,11 @@ class Product
     }
 }
 
+// Exemple d'utilisation
+$createdAt = new DateTime('2022-01-01');
+$updatedAt = new DateTime('2022-01-02');
 
-$product = new Product(1, 'T-shirt', ['https://picsum.photos/200/300'], 1000, 'A beautiful T-shirt', 10, new DateTime());
+$product = new Product(1, 'T-shirt', ['https://picsum.photos/200/300'], 1000, 'A beautiful T-shirt', 10, $createdAt, $updatedAt);
 
 // Utilisation des getters pour récupérer les propriétés
 var_dump($product->getId());
