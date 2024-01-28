@@ -319,6 +319,48 @@ class Product
             die('Erreur lors de la récupération de tous les produits : ' . $e->getMessage());
         }
     }
+    public function update()
+    {
+        // Vérifier si l'instance a déjà un ID
+        if ($this->id === null) {
+            die('Impossible de mettre à jour le produit sans ID.');
+        }
+
+        // Requête SQL pour mettre à jour un produit
+        $query = "UPDATE product 
+                  SET name = :name, 
+                      photos = :photos, 
+                      price = :price, 
+                      description = :description, 
+                      quantity = :quantity, 
+                      updatedAt = :updatedAt, 
+                      category_id = :category_id
+                  WHERE id = :id";
+
+        try {
+            // Préparer la requête
+            $stmt = $this->pdo->prepare($query);
+
+            // Liaison des paramètres
+            $stmt->bindParam(':name', $this->name, PDO::PARAM_STR);
+            $stmt->bindParam(':photos', json_encode($this->photos), PDO::PARAM_STR);
+            $stmt->bindParam(':price', $this->price, PDO::PARAM_INT);
+            $stmt->bindParam(':description', $this->description, PDO::PARAM_STR);
+            $stmt->bindParam(':quantity', $this->quantity, PDO::PARAM_INT);
+            $stmt->bindParam(':updatedAt', $this->updatedAt->format('Y-m-d H:i:s'), PDO::PARAM_STR);
+            $stmt->bindParam(':category_id', $this->category_id, PDO::PARAM_INT);
+            $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+            // Exécution de la requête
+            $stmt->execute();
+
+            return $this;
+        } catch (PDOException $e) {
+            // Gérer les erreurs lors de l'exécution de la requête
+            die('Erreur lors de la mise à jour du produit : ' . $e->getMessage());
+        }
+    }
+
     // New method to get products associated with the category
     public function getProducts()
     {
@@ -453,7 +495,7 @@ echo "Category Updated At: " . $category->getUpdatedAt()->format('Y-m-d H:i:s') 
 
 // Récupérer les produits associés à la catégorie
 $products = new Product();
-$products-> create();
+$product->update()
 
 // Afficher les informations des produits
 echo "<h2>Products in this category:</h2>";

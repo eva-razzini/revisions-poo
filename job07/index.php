@@ -378,8 +378,7 @@ echo "Category Created At: " . $category->getCreatedAt()->format('Y-m-d H:i:s') 
 echo "Category Updated At: " . $category->getUpdatedAt()->format('Y-m-d H:i:s') . "<br>";
 
 // Récupérer les produits associés à la catégorie
-$products = new Product();
-$products-> getProducts();
+ Product::findOneById($id, $pdo);
 
 // Afficher les informations des produits
 echo "<h2>Products in this category:</h2>";
