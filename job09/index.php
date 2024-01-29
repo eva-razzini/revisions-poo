@@ -319,6 +319,38 @@ class Product
             die('Erreur lors de la récupération de tous les produits : ' . $e->getMessage());
         }
     }
+    public function create()
+    {
+        // Requête SQL pour insérer un nouveau produit
+        $query = "INSERT INTO product (name, photos, price, description, quantity, createdAt, updatedAt, category_id) 
+                  VALUES (:name, :photos, :price, :description, :quantity, :createdAt, :updatedAt, :category_id)";
+
+        try {
+            // Préparer la requête
+            $stmt = $this->pdo->prepare($query);
+
+            // Liaison des paramètres
+            $stmt->bindParam(':name', $this->name, PDO::PARAM_STR);
+            $stmt->bindParam(':photos', json_encode($this->photos), PDO::PARAM_STR);
+            $stmt->bindParam(':price', $this->price, PDO::PARAM_INT);
+            $stmt->bindParam(':description', $this->description, PDO::PARAM_STR);
+            $stmt->bindParam(':quantity', $this->quantity, PDO::PARAM_INT);
+            $stmt->bindParam(':createdAt', $this->createdAt->format('Y-m-d H:i:s'), PDO::PARAM_STR);
+            $stmt->bindParam(':updatedAt', $this->updatedAt->format('Y-m-d H:i:s'), PDO::PARAM_STR);
+            $stmt->bindParam(':category_id', $this->category_id, PDO::PARAM_INT);
+
+            // Exécution de la requête
+            $stmt->execute();
+
+            // Récupération de l'ID du nouveau produit
+            $this->id = $this->pdo->lastInsertId();
+
+            return $this;
+        } catch (PDOException $e) {
+            // Gérer les erreurs lors de l'exécution de la requête
+            die('Erreur lors de l\'insertion du produit : ' . $e->getMessage());
+        }
+    } 
     // New method to get products associated with the category
     public function getProducts()
     {
@@ -410,39 +442,7 @@ try {
             new DateTime($categoryData['updatedAt']),
             $pdo
         );
-
-        public function create()
-        {
-            // Requête SQL pour insérer un nouveau produit
-            $query = "INSERT INTO product (name, photos, price, description, quantity, createdAt, updatedAt, category_id) 
-                      VALUES (:name, :photos, :price, :description, :quantity, :createdAt, :updatedAt, :category_id)";
-    
-            try {
-                // Préparer la requête
-                $stmt = $this->pdo->prepare($query);
-    
-                // Liaison des paramètres
-                $stmt->bindParam(':name', $this->name, PDO::PARAM_STR);
-                $stmt->bindParam(':photos', json_encode($this->photos), PDO::PARAM_STR);
-                $stmt->bindParam(':price', $this->price, PDO::PARAM_INT);
-                $stmt->bindParam(':description', $this->description, PDO::PARAM_STR);
-                $stmt->bindParam(':quantity', $this->quantity, PDO::PARAM_INT);
-                $stmt->bindParam(':createdAt', $this->createdAt->format('Y-m-d H:i:s'), PDO::PARAM_STR);
-                $stmt->bindParam(':updatedAt', $this->updatedAt->format('Y-m-d H:i:s'), PDO::PARAM_STR);
-                $stmt->bindParam(':category_id', $this->category_id, PDO::PARAM_INT);
-    
-                // Exécution de la requête
-                $stmt->execute();
-    
-                // Récupération de l'ID du nouveau produit
-                $this->id = $this->pdo->lastInsertId();
-    
-                return $this;
-            } catch (PDOException $e) {
-                // Gérer les erreurs lors de l'exécution de la requête
-                die('Erreur lors de l\'insertion du produit : ' . $e->getMessage());
-            }
-        }    
+   
 
 // Afficher les informations de la catégorie
 echo "Category ID: " . $category->getId() . "<br>";
